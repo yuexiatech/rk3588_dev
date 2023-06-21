@@ -13,8 +13,12 @@ set(SOURCE_FILES main.cpp
         rkdrm/bo.c
         rkdrm/dev.c
         rkdrm/modeset.c)
-
 add_executable(mpp_linux_demo ${SOURCE_FILES})
+
+set(HEADER_FILES 
+        /home/rpdzkj/Downloads/mpp/osal/inc/mpp_common.h)
+add_library(mpp ${HEADER_FILES})
+
 #[[
 include_directories(
 ${CMAKE_CURRENT_SOURCE_DIR}/home/rpdzkj/Downloads/mpp/inc/
