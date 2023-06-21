@@ -16,10 +16,11 @@ set(SOURCE_FILES main.cpp
 
 add_executable(mpp_linux_demo ${SOURCE_FILES})
 
-add_library(mpp SHARED IMPORTED)
-set_target_properties(mpp PROPERTIES
-  IMPORTED_LOCATION /home/rpdzkj/Downloads/mpp/mpp/librockchip_mpp.so
-  INTERFACE_INCLUDE_DIRECTORIES /home/rpdzkj/Downloads/mpp/
+include_directories(
+${CMAKE_CURRENT_SOURCE_DIR}/home/rpdzkj/Downloads/mpp/inc
+${CMAKE_CURRENT_SOURCE_DIR}/home/rpdzkj/Downloads/mpp/
+${CMAKE_CURRENT_SOURCE_DIR}/home/rpdzkj/Downloads/mpp/osal/linux/
+${CMAKE_CURRENT_SOURCE_DIR}/home/rpdzkj/Downloads/mpp/osal/inc/
 )
 target_link_libraries(mpp_linux_demo mpp pthread drm)
 #[[
