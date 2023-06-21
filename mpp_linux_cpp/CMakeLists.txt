@@ -17,7 +17,7 @@ add_executable(mpp_linux_demo ${SOURCE_FILES})
 
 set(HEADER_FILES 
         /home/rpdzkj/Downloads/mpp/osal/inc/mpp_common.h)
-add_library(mpp ${HEADER_FILES})
+add_library(mpp_linux_demo ${HEADER_FILES})
 
 #[[
 include_directories(
