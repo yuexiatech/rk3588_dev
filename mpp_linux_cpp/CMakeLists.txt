@@ -18,5 +18,7 @@ add_executable(mpp_linux_demo ${SOURCE_FILES})
 
 target_include_directories(mpp_linux_demo PRIVATE /home/rpdzkj/Downloads/mpp/inc)
 target_link_directories(mpp_linux_demo PRIVATE /home/rpdzkj/Downloads/mpp/inc)
+target_include_directories(mpp_linux_demo PRIVATE /home/rpdzkj/Downloads/mpp/osal/linux/)
+target_link_directories(mpp_linux_demo PRIVATE /home/rpdzkj/Downloads/mpp/osal/linux/)
 
 target_link_libraries(mpp_linux_demo mpp pthread drm)
