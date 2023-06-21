@@ -18,8 +18,8 @@ add_executable(mpp_linux_demo ${SOURCE_FILES})
 
 add_library(mpp SHARED IMPORTED)
 set_target_properties(mpp PROPERTIES
-  IMPORTED_LOCATION /usr/local/lib/mpp/mpp/librockchip_mpp.so
-  INTERFACE_INCLUDE_DIRECTORIES /usr/local/lib/mpp/
+  IMPORTED_LOCATION /home/rpdzkj/Downloads/mpp/mpp/librockchip_mpp.so
+  INTERFACE_INCLUDE_DIRECTORIES /home/rpdzkj/Downloads/mpp/
 )
 target_link_libraries(mpp_linux_demo mpp pthread drm)
 #[[
