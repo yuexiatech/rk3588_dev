@@ -16,6 +16,13 @@ set(SOURCE_FILES main.cpp
 
 add_executable(mpp_linux_demo ${SOURCE_FILES})
 
+add_library(mpp SHARED IMPORTED)
+set_target_properties(mpp PROPERTIES
+  IMPORTED_LOCATION /usr/local/lib/mpp/mpp/librockchip_mpp.so
+  INTERFACE_INCLUDE_DIRECTORIES /usr/local/lib/mpp/
+)
+target_link_libraries(mpp_linux_demo mpp pthread drm)
+#[[
 target_include_directories(mpp_linux_demo PRIVATE /home/rpdzkj/Downloads/mpp/inc)
 target_link_directories(mpp_linux_demo PRIVATE /home/rpdzkj/Downloads/mpp/inc)
 target_include_directories(mpp_linux_demo PRIVATE /home/rpdzkj/Downloads/mpp/)
@@ -25,5 +32,5 @@ target_link_directories(mpp_linux_demo PRIVATE /home/rpdzkj/Downloads/mpp/osal/l
 target_include_directories(mpp_linux_demo PRIVATE /home/rpdzkj/Downloads/mpp/osal/inc/)
 target_link_directories(mpp_linux_demo PRIVATE /home/rpdzkj/Downloads/mpp/osal/inc/)
 
-target_link_libraries(mpp_linux_demo /home/rpdzkj/Downloads/mpp)
-# target_link_libraries(mpp_linux_demo mpp pthread drm)
+target_link_libraries(mpp_linux_demo mpp pthread drm)
+]]
