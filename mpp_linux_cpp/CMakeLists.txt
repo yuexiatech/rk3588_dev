@@ -17,7 +17,7 @@ set(SOURCE_FILES main.cpp
 add_executable(mpp_linux_demo ${SOURCE_FILES})
 
 include_directories(
-${CMAKE_CURRENT_SOURCE_DIR}/home/rpdzkj/Downloads/mpp/inc
+${CMAKE_CURRENT_SOURCE_DIR}/home/rpdzkj/Downloads/mpp/inc/
 ${CMAKE_CURRENT_SOURCE_DIR}/home/rpdzkj/Downloads/mpp/
 ${CMAKE_CURRENT_SOURCE_DIR}/home/rpdzkj/Downloads/mpp/osal/linux/
 ${CMAKE_CURRENT_SOURCE_DIR}/home/rpdzkj/Downloads/mpp/osal/inc/
