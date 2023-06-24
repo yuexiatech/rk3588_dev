@@ -25,7 +25,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/home/rpdzkj/Downloads/mpp/osal/inc/
 target_link_libraries(mpp_linux_demo mpp pthread drm)
 ]]
 
-find_library(MPP_LIB mpp)
+find_library(MPP_LIB rockchip_mpp)
 target_link_libraries(mpp_linux_demo PRIVATE "${MPP_LIB}")
 target_link_libraries(mpp_linux_demo mpp pthread drm)
 
