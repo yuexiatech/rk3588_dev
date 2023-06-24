@@ -27,7 +27,7 @@ target_link_libraries(mpp_linux_demo mpp pthread drm)
 
 find_library(MPP_LIB rockchip_mpp)
 target_link_libraries(mpp_linux_demo PRIVATE "${MPP_LIB}")
-target_link_libraries(mpp_linux_demo mpp pthread drm)
+target_link_libraries(mpp_linux_demo rockchip_mpp pthread drm)
 
 
 target_include_directories(mpp_linux_demo PRIVATE /home/rpdzkj/Downloads/mpp/osal/inc/)
