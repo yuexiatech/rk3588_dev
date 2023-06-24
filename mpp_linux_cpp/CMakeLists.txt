@@ -26,7 +26,7 @@ target_link_libraries(mpp_linux_demo mpp pthread drm)
 ]]
 
 find_library(MPP_LIB mpp)
-target_link_libraries(GLBall PRIVATE "${MPP_LIB}")
+target_link_libraries(mpp_linux_demo PRIVATE "${MPP_LIB}")
 target_link_libraries(mpp_linux_demo mpp pthread drm)
 
 
