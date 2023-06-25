@@ -35,7 +35,7 @@ struct param {
  * specified res file info here
  */
 param params[1] = {
-    {1, 1920, 1080, "../res/Tennis1080p.h264", "../res/Tennis1080p.yuv", MPP_VIDEO_CodingAVC},
+    {1, 1920, 1080, "./res/Tennis1080p.h264", "./res/Tennis1080p.yuv", MPP_VIDEO_CodingAVC},
 };
 
 void *thread_exec(void *args) {
