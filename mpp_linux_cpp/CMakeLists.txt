@@ -16,22 +16,12 @@ set(SOURCE_FILES main.cpp
 add_executable(mpp_linux_demo ${SOURCE_FILES})
 
 #[[
-include_directories(
-${CMAKE_CURRENT_SOURCE_DIR}/home/rpdzkj/Downloads/mpp/inc/
-${CMAKE_CURRENT_SOURCE_DIR}/home/rpdzkj/Downloads/mpp/
-${CMAKE_CURRENT_SOURCE_DIR}/home/rpdzkj/Downloads/mpp/osal/linux/
-${CMAKE_CURRENT_SOURCE_DIR}/home/rpdzkj/Downloads/mpp/osal/inc/
-)
-target_link_libraries(mpp_linux_demo mpp pthread drm)
-]]
-
-#[[
 find_library(MPP_LIB rockchip_mpp)
 target_link_libraries(mpp_linux_demo PRIVATE "${MPP_LIB}")
 ]]
 target_link_libraries(mpp_linux_demo rockchip_mpp pthread drm)
 
-
+#[[
 target_include_directories(mpp_linux_demo PRIVATE /home/rpdzkj/Downloads/mpp/osal/inc/)
 target_link_directories(mpp_linux_demo PRIVATE /home/rpdzkj/Downloads/mpp/osal/inc/)
 target_include_directories(mpp_linux_demo PRIVATE /home/rpdzkj/Downloads/mpp/inc)
@@ -40,3 +30,4 @@ target_include_directories(mpp_linux_demo PRIVATE /home/rpdzkj/Downloads/mpp/)
 target_link_directories(mpp_linux_demo PRIVATE /home/rpdzkj/Downloads/mpp/)
 target_include_directories(mpp_linux_demo PRIVATE /home/rpdzkj/Downloads/mpp/osal/linux/)
 target_link_directories(mpp_linux_demo PRIVATE /home/rpdzkj/Downloads/mpp/osal/linux/)
+]]
