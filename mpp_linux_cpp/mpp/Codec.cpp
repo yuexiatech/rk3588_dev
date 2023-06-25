@@ -360,8 +360,8 @@ int Codec::decode_one_pkt(char *buf, int size, MppFrame *srcFrm, MppFrame *dstFr
                     } else {
                         cxx_log("decode_get_frame ID:%d get srcFrm %d.\n", mID, mFrmCnt++);
                         if (mDisPlay) {
-                            // ret = mRGA->swscale(mpp_buffer_get_fd(mpp_frame_get_buffer(*srcFrm)),
-                            //                    mpp_buffer_get_fd(mpp_frame_get_buffer(*dstFrm)));
+                            ret = mRGA->swscale(mpp_buffer_get_fd(mpp_frame_get_buffer(*srcFrm)),
+                                                mpp_buffer_get_fd(mpp_frame_get_buffer(*dstFrm)));
                             if (ret < 0) {
                                 cxx_log("failed to exec mRGA->swscale ret:%d.\n", ret);
                             } else {
