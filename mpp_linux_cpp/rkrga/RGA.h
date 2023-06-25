@@ -5,7 +5,8 @@
 #ifndef MPP_LINUX_C_RGA_H
 #define MPP_LINUX_C_RGA_H
 
-#define RK_RGA_DEV	"/dev/v4l/by-path/platform-ff680000.rga-video-index0"
+// #define RK_RGA_DEV	"/dev/v4l/by-path/platform-ff680000.rga-video-index0"
+#define RK_RGA_DEV	"/dev/rga"
 
 extern "C" {
 #include <fcntl.h>

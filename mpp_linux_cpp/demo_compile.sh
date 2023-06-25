@@ -1,0 +1,1 @@
+cmake -DRKPLATFORM=ON -DHAVE_DRM=ON && make
