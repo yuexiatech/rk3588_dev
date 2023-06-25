@@ -19,15 +19,14 @@ add_executable(mpp_linux_demo ${SOURCE_FILES})
 find_library(MPP_LIB rockchip_mpp)
 target_link_libraries(mpp_linux_demo PRIVATE "${MPP_LIB}")
 ]]
-target_link_libraries(mpp_linux_demo rockchip_mpp pthread drm)
 
-#[[
-target_include_directories(mpp_linux_demo PRIVATE /home/rpdzkj/Downloads/mpp/osal/inc/)
-target_link_directories(mpp_linux_demo PRIVATE /home/rpdzkj/Downloads/mpp/osal/inc/)
-target_include_directories(mpp_linux_demo PRIVATE /home/rpdzkj/Downloads/mpp/inc)
-target_link_directories(mpp_linux_demo PRIVATE /home/rpdzkj/Downloads/mpp/inc)
-target_include_directories(mpp_linux_demo PRIVATE /home/rpdzkj/Downloads/mpp/)
-target_link_directories(mpp_linux_demo PRIVATE /home/rpdzkj/Downloads/mpp/)
-target_include_directories(mpp_linux_demo PRIVATE /home/rpdzkj/Downloads/mpp/osal/linux/)
-target_link_directories(mpp_linux_demo PRIVATE /home/rpdzkj/Downloads/mpp/osal/linux/)
-]]
+target_include_directories(mpp_linux_demo PRIVATE ../mpp/osal/inc/)
+target_link_directories(mpp_linux_demo PRIVATE ../mpp/osal/inc/)
+target_include_directories(mpp_linux_demo PRIVATE ../mpp/inc)
+target_link_directories(mpp_linux_demo PRIVATE ../mpp/inc)
+target_include_directories(mpp_linux_demo PRIVATE ../mpp/)
+target_link_directories(mpp_linux_demo PRIVATE ../mpp/)
+target_include_directories(mpp_linux_demo PRIVATE ../mpp/osal/linux/)
+target_link_directories(mpp_linux_demo PRIVATE ../mpp/osal/linux/)
+
+target_link_libraries(mpp_linux_demo rockchip_mpp pthread drm)
