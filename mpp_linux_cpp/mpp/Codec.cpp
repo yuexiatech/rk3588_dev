@@ -130,7 +130,7 @@ int Codec::init(const char *file_input,
     }
 
     mRGA = new RGA();
-    ret = mRGA->init(srcW, srcH, srcW, srcH);
+    // ret = mRGA->init(srcW, srcH, srcW, srcH);
     if (ret < 0) {
         cxx_log("failed to exec mRGA->init %d.\n", ret);
         return -8;
