@@ -359,22 +359,24 @@ int Codec::decode_one_pkt(char *buf, int size, MppFrame *srcFrm, MppFrame *dstFr
                         mApi->control(mCtx, MPP_DEC_SET_INFO_CHANGE_READY, NULL);
                     } else {
                         cxx_log("decode_get_frame ID:%d get srcFrm %d.\n", mID, mFrmCnt++);
+                        mDisPlay = 0; // self edited
                         if (mDisPlay) {
                             ret = mRGA->swscale(mpp_buffer_get_fd(mpp_frame_get_buffer(*srcFrm)),
                                                 mpp_buffer_get_fd(mpp_frame_get_buffer(*dstFrm)));
                             if (ret < 0) {
                                 cxx_log("failed to exec mRGA->swscale ret:%d.\n", ret);
-                            } else {
-                                drm_show_frmae(*dstFrm);
-                                if (mFout) {
-                                    /*
-                                     * note that write file will leads to IO block
-                                     * so if you want to test frame rate,don't wirte
-                                     * it.
-                                     */
-                                    //dump_mpp_frame_to_file(*srcFrm, mFout);
-                                }
+                            } 
+                        else {
+                            drm_show_frmae(*dstFrm);
+                            if (mFout) {
+                                /*
+                                    * note that write file will leads to IO block
+                                    * so if you want to test frame rate,don't wirte
+                                    * it.
+                                    */
+                                //dump_mpp_frame_to_file(*srcFrm, mFout);
                             }
+                        }
                         }
                     }
                     frm_eos = mpp_frame_get_eos(*srcFrm);
