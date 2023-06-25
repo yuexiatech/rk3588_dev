@@ -209,6 +209,9 @@ CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 //No help, variable specified on the command line.
 HAVE_DRM:UNINITIALIZED=ON
 
+//Path to a library.
+MPP_LIB:FILEPATH=/usr/lib/aarch64-linux-gnu/librockchip_mpp.so
+
 //No help, variable specified on the command line.
 RKPLATFORM:UNINITIALIZED=ON
 
