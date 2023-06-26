@@ -26,9 +26,22 @@ gst-launch-1.0 filesrc location=Tennis1080p.mp4 ! qtdemux ! h264parse ! rtph264p
 # RTSP connect(Not working)
 gst-launch-1.0 rtspsrc location=rtsp://192.168.8.51:8554/test ! gdpdepay ! rtph264depay ! avdec_h264 ! autovideosink
 
-gst-launch-1.0 rtspsrc location=rtsp://192.168.8.51:8554/url ! fakesink
 
-# RTMP: need flasher
+# RTMP
+export RTMP_SRC="rtmp://matthewc.co.uk/vod/scooter.flv"
+gst-launch-1.0 playbin uri=$RTMP_SRC
+## send to server (Not working)
+gst-launch-1.0 filesrc location=Tennis1080p.mp4 ! qtdemux ! h264parse ! flvmux streamable=true name=mux ! rtmpsink location="rtmp://172.24.80.1/live/test" audiotestsrc ! voaacenc ! mux.
+## read from server(Not working)
+gst-launch-1.0 rtmpsrc location="rtmp://192.168.1.100/live/test" ! flvdemux name=demux demux.video ! h264parse ! avdec_h264 ! autovideosink demux.audio ! aacparse ! avdec_aac ! autoaudiosink
 
-gst-launch-1.0 filesrc location=Tennis1080p.mp4 ! qtdemux ! h264parse ! mpegtsmux name=mux ! hlssink max-files=5
+# Storage
 
+# Pull
+
+# Push
+gst-launch-1.0 filesrc location=Tennis1080p.mp4 ! qtdemux ! h264parse ! mpegtsmux name=mux ! tcpserversink port=5000
+
+
+# transforming
+gst-launch-1.0 filesrc location=Tennis1080p.mp4 ! decodebin name=decode ! encodebin profile="video/x-h265" name=encode ! filesink location=Tennis1080p_h265.mp4
