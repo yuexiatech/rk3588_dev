@@ -50,3 +50,8 @@ gst-launch-1.0 filesrc location=Tennis1080p.mp4 ! decodebin name=decode ! encode
 
 # rate conversion
 gst-launch-1.0 filesrc location=Tennis1080p.mp4 ! decodebin name=decode ! tee name=t t. ! queue ! x264enc bitrate=1000 ! mp4mux name=mux1 ! filesink location=Tennis1080p_1000.mp4 t. ! queue ! videoscale ! "video/x-raw,width=640,height=480" ! x264enc bitrate=500 ! mp4mux name=mux2 ! filesink location=Tennis1080p_500.mp4 t. ! queue ! videoscale ! "video/x-raw,width=320,height=240" ! x264enc bitrate=200 ! mp4mux name=mux3 ! filesink location=Tennis1080p_200.mp4
+
+# Qos
+gst-launch-1.0 -v filesrc location=Tennis1080p.mp4 ! decodebin ! x264enc tune=zerolatency bitrate=1000 ! rtph264pay ! udpsink host=192.168.8.90 port=5000 qos=true
+
+gst-launch-1.0 -v udpsrc port=5000 caps = "application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264, payload=(int)96" ! decodebin ! videoconvert ! autovideosink qos=true
