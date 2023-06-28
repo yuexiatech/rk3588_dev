@@ -6,8 +6,11 @@ apt-get install gstreamer1.0-plugins-good
 apt-get install gst-rtsp-server
 
 # camera play
-gst-launch-1.0 v4l2src device=/dev/video31 ! videoconvert! videoscale ! video/x-raw, width=800, height=600 ! autovideosink -v 
-
+gst-launch-1.0 v4l2src device=/dev/video31 ! videoconvert! videoscale ! video/x-raw, width=800, height=600 ! autovideosink 
+gst-launch-1.0 v4l2src device=/dev/video41  ! videoconvert! videoscale ! video/x-raw, width=800, height=600 ! autovideosink 
+gst-launch-1.0 v4l2src device=/dev/video41 ! video/jpeg,width=640,height=480,framerate=30/1
+## 
+gst-launch-1.0 v4l2src device=/dev/video41 ! image/jpeg,width=640,height=480,framerate=30/1 ! filesink location=video.mjpg
 # camera video push
 gst-launch-1.0 -v v4l2src device=/dev/video31 ! video/x-raw,width=640,height=480,framerate=30/1 ! x264enc ! rtph264pay ! udpsink host=192.168.8.90 port=5000
 # camera video  recieve
@@ -69,3 +72,14 @@ uridecodebin uri=http://vjs.zencdn.net/v/oceans.mp4 ! decodebin ! videoscale ! v
 uridecodebin uri=https://media.w3.org/2010/05/sintel/trailer.mp4 ! decodebin ! videoscale ! video/x-raw,width=320,height=240 ! mix.sink_2 \
 uridecodebin uri=http://mirror.aarnet.edu.au/pub/TED-talks/911Mothers_2010W-480p.mp4 ! decodebin ! videoscale ! video/x-raw,width=320,height=240 ! mix.sink_3
 
+gst-launch-1.0  \
+videomixer name=mix \
+sink_0::xpos=0 sink_0::ypos=0 sink_0::alpha=1 \
+sink_1::xpos=320 sink_1::ypos=0 sink_1::alpha=1 \
+sink_2::xpos=0 sink_2::ypos=240 sink_2::alpha=1 \
+sink_3::xpos=320 sink_3::ypos=240 sink_3::alpha=1 \
+! autovideosink qos=true \
+filesrc location = Tennis1080p.mp4 ! decodebin ! videoscale ! video/x-raw,width=320,height=240 ! mix.sink_0 \
+filesrc location = Tennis1080p_200.mp4 ! decodebin ! videoscale ! video/x-raw,width=320,height=240 ! mix.sink_1 \
+filesrc location = Tennis1080p_500.mp4 ! decodebin ! videoscale ! video/x-raw,width=320,height=240 ! mix.sink_2 \
+v4l2src device=/dev/video31 ! videoconvert! videoscale ! video/x-raw, width=320, height=240 ! autovideosin
