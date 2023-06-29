@@ -1,0 +1,1 @@
+`cd /home/rpdzkj/Downloads/rk3588_dev/`
