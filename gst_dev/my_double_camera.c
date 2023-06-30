@@ -57,10 +57,12 @@ int main(int argc, char *argv[]) {
   gst_caps_unref (caps2);
 
   /* Set properties on the mixer pads */
-  GstPad *mixer_sink_pad_0 = gst_element_get_request_pad(mixer, "sink_%u");
+  GstPad *mixer_sink_pad_0;
+  mixer_sink_pad_0 = gst_element_get_request_pad(mixer, "sink_%u");
   g_object_set(mixer_sink_pad_0, "xpos", 0, "ypos", 0, "alpha", (gdouble)1.0, NULL);
 
-  GstPad *mixer_sink_pad_1 = gst_element_get_request_pad(mixer, "sink_%u");
+  GstPad *mixer_sink_pad_1;
+  mixer_sink_pad_1 = gst_element_get_request_pad(mixer, "sink_%u");
   g_object_set(mixer_sink_pad_1, "xpos", 0, "ypos", 240, "alpha", (gdouble)1.0, NULL);
 
   /* Build the pipeline */
@@ -75,18 +77,15 @@ int main(int argc, char *argv[]) {
      g_printerr("Failed to link source #1\n");
      return -1;
    }
-   if(!gst_element_link_pads(convert1,"src",
-       mixer_sink_pad_0,"sink")) {
+   if(!gst_element_link_pads(convert1,"src",mixer_sink_pad_0,"sink")) {
      g_printerr("Failed to link mixer pad #0\n");
      return -1;
    }
-   if(!gst_element_link_many(source2,capsfilter2,
-       decoder,NULL)) {
+   if(!gst_element_link_many(source2,capsfilter2,decoder,NULL)) {
      g_printerr("Failed to link source #2\n");
      return -1;
    }
-   if(!gst_element_link_pads(decoder,"src",
-       mixer_sink_pad_1,"sink")) {
+   if(!gst_element_link_pads(decoder,"src",mixer_sink_pad_1,"sink")) {
      g_printerr("Failed to link mixer pad #0\n");
      return -1;
    }
