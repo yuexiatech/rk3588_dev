@@ -1,5 +1,6 @@
 #include <gst/gst.h>
-
+// gst-launch-1.0 v4l2src device=/dev/video41 ! image/jpeg,width=640,height=480,framerate=30/1 ! jpegdec ! autovideosink
+// gcc my_video41_play.c -o my_video41_play ` pkg-config --cflags --libs gstreamer-1.0`
 int main(int argc, char *argv[]) {
   GstElement *pipeline, *source, *capsfilter, *decoder, *sink;
   GstCaps *caps;
