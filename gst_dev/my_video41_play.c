@@ -41,3 +41,4 @@ int main(int argc, char *argv[]) {
 
   /* Start playing */
   gst_element_set_state (pipeline, GST_STATE_PLAYING);
+}
