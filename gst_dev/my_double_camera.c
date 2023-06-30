@@ -20,6 +20,9 @@ int main(int argc, char *argv[]) {
   GstCaps *caps1, *caps2;
   GstBus *bus;
   GstMessage *msg;
+    /*-----------------------*/
+   /*     Initialization    */
+  /*-----------------------*/
 
   /* Initialize GStreamer */
   gst_init (&argc, &argv);
@@ -65,6 +68,10 @@ int main(int argc, char *argv[]) {
   mixer_sink_pad_1 = gst_element_get_request_pad(mixer, "sink_%u");
   g_object_set(mixer_sink_pad_1, "xpos", 0, "ypos", 240, "alpha", (gdouble)1.0, NULL);
 
+     /*-----------------------------*/
+    /*     pipeline construction   */
+   /*-----------------------------*/
+
    /* Build the pipeline */
    gst_bin_add_many(GST_BIN(pipeline), mixer,sink,
        source1,capsfilter1,scale1,
@@ -97,6 +104,9 @@ int main(int argc, char *argv[]) {
      return -1;
    }
 
+     /*-----------------------------*/
+    /*     pipeline execution      */
+   /*-----------------------------*/
 
    /* Start playing */
    gst_element_set_state(pipeline,GST_STATE_PLAYING);
