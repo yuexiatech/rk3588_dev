@@ -1,4 +1,7 @@
 #include <gst/gst.h>
+// gst-launch-1.0 v4l2src device=/dev/video31 ! videoconvert! videoscale ! video/x-raw, width=800, height=600 ! autovideosink 
+
+#include <gst/gst.h>
 
 int main(int argc, char *argv[]) {
   GstElement *pipeline, *source, *convert, *scale, *capsfilter, *sink;
@@ -6,7 +9,6 @@ int main(int argc, char *argv[]) {
   GstBus *bus;
   GstMessage *msg;
 
-  gst_debug_set_default_threshold(GST_LEVEL_WARNING);
   /* Initialize GStreamer */
   gst_init (&argc, &argv);
 
@@ -29,7 +31,7 @@ int main(int argc, char *argv[]) {
   g_object_set (G_OBJECT (source), "device", "/dev/video31", NULL);
 
   /* Set the caps on the capsfilter element */
-  caps = gst_caps_from_string ("video/x-raw, width=800, height=600, pixel-aspect-ratio=1/1");
+  caps = gst_caps_from_string ("video/x-raw, width=800, height=600");
   g_object_set (G_OBJECT (capsfilter), "caps", caps, NULL);
   gst_caps_unref (caps);
 
@@ -43,4 +45,16 @@ int main(int argc, char *argv[]) {
 
   /* Start playing */
   gst_element_set_state (pipeline, GST_STATE_PLAYING);
+
+  /* Wait until error or EOS */
+  bus = gst_element_get_bus (pipeline);
+  msg = gst_bus_timed_pop_filtered (bus, GST_CLOCK_TIME_NONE,
+      GST_MESSAGE_ERROR | GST_MESSAGE_EOS);
+
+  /* Free resources */
+  if (msg != NULL)
+    gst_message_unref (msg);
+  gst_object_unref (bus);
+  gst_element_set_state (pipeline, GST_STATE_NULL);
+  gst_object_unref (pipeline);
 }
