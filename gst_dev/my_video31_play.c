@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
   g_object_set (G_OBJECT (source), "device", "/dev/video31", NULL);
 
   /* Set the caps on the capsfilter element */
-  caps = gst_caps_from_string ("video/x-raw, width=800, height=600");
+  caps = gst_caps_from_string ("video/x-raw, width=800, height=600", pixel-aspect-ratio=1/1");
   g_object_set (G_OBJECT (capsfilter), "caps", caps, NULL);
   gst_caps_unref (caps);
 
