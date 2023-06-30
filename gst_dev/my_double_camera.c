@@ -21,7 +21,9 @@ main (int argc, char *argv[])
     // Create a pipeline and a videomixer element
     GstElement *pipeline = gst_pipeline_new ("pipeline");
     GstElement *mixer = gst_element_factory_make ("videomixer", "mix");
-
+    GstBus *bus;
+    GstMessage *msg;
+    
     // Set the properties of the mixer
     g_object_set (mixer, "sink_0::xpos", 0, "sink_0::ypos", 0, "sink_0::alpha", 1, NULL);
     g_object_set (mixer, "sink_1::xpos", 0, "sink_1::ypos", 240, "sink_1::alpha", 1, NULL);
