@@ -5,7 +5,8 @@ int main(int argc, char *argv[]) {
   GstCaps *caps;
   GstBus *bus;
   GstMessage *msg;
-
+  
+  gst_debug_set_default_threshold(GST_LEVEL_WARNING);
   /* Initialize GStreamer */
   gst_init (&argc, &argv);
 
