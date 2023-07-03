@@ -15,16 +15,20 @@
 
 **Server side**:
 
-*   The server program would be responsible for receiving incoming streams from clients, storing them, and making them available for playback.
-*   The server would have a pipeline that uses `appsrc` and `appsink` elements to receive data from clients and send it to the storage component.
-*   The storage component would use `filesink` and `filesrc` elements to save and retrieve data from disk.
-*   The server would also have a pipeline for handling playback requests from clients. This pipeline would use `filesrc`, decoding, encoding, and muxing elements to read data from disk, transcode it into the desired format, and send it to clients.
-*   The server would support multiple communication protocols, such as RTP, RTSP, and RTMP, for receiving data from clients and sending data to them.
+* Implement a command-line interface for controlling the server.
+* Implement support for multiple communication protocols, including RTP, RTSP, and RTMP for signaling and data communication.
+* Implement storage, push/pull streaming, and video-on-demand (VOD) functionality.
+* Implement multi-bitrate video transcoding and generation.
+* Implement network bandwidth detection and bitrate selection (QoS).
+* Support downward compatibility with 4K video resolution and H.264/H.265 encoding.
+* Support multi-point access and asynchronous playback for at least 32 concurrent users.
 
 **Client side**:
 
-*   The client program would be responsible for capturing audio and video data, encoding it, and sending it to the server.
-*   The client would have a pipeline that uses `v4l2src` or other source elements to capture audio and video data from the local system.
-*   The captured data would be encoded using encoding elements such as `x264enc` or `vp8enc`, and then sent to the server using `appsrc` and `appsink` elements.
-*   The client would support multiple communication protocols, such as RTP, RTSP, and RTMP, for sending data to the server and receiving data from it.
-*   The client could also have a playback component that uses `appsrc`, decoding, and sink elements to receive data from the server and play it back locally.
+* Implement a command-line interface for controlling the client.
+* Implement support for multiple communication protocols, including RTP, RTSP, and RTMP for signaling and data communication.
+* Implement functionality to receive and decode audio and video data from the server.
+* Support downward compatibility with 4K video resolution and H.264/H.265 decoding.
+* Implement network bandwidth detection and bitrate selection (QoS).
+
+Both the server and client programs will need to use GStreamer elements such as rtpbin, rtspclientsink, rtmpsink, decodebin, x264enc, x265enc, videorate, videoscale, etc., as well as custom code to handle the command line interface, network communication, and other features.
