@@ -1,25 +1,20 @@
-**Client side:**
+**Client side outline**:
 
-*   `main.c`: Contains the main function and initializes the GStreamer library, creates the pipeline, and starts the main loop.
-*   `client.c`: Contains functions for setting up the pipeline, handling messages from the server, and sending data to the server.
-    *   The pipeline would use `v4l2src` or other source elements to capture audio and video data from the local system.
-    *   The captured data would be encoded using encoding elements such as `x264enc` or `vp8enc`.
-    *   The encoded data would be sent to the server using `appsrc` and `appsink` elements.
-    *   The client would support multiple communication protocols, such as RTP, RTSP, and RTMP, for sending data to the server and receiving data from it.
-*   `playback.c`: Contains functions for setting up the playback pipeline and handling playback of received data.
-    *   The playback pipeline would use `appsrc`, decoding, and sink elements to receive data from the server and play it back locally.
-*   `protocol.c`: Contains functions for handling communication with the server using different protocols.
-    *   The client would support multiple communication protocols, such as RTP, RTSP, and RTMP, for sending data to the server and receiving data from it.
+*   The client program would have a main function that initializes the GStreamer library, creates a new pipeline object, and sets up the command-line interface.
+*   The pipeline would consist of several components, including a client component for communication with the server using one of the supported protocols (RTP, RTSP, RTMP), a decoding component for decoding received audio and video data, and a player component for handling audio and video playback on the client device.
+*   The client component would establish a connection with the server and receive audio and video data.
+*   The decoding component would select appropriate decoder elements for the H.264/H.265 codecs.
+*   The player component would handle audio and video playback on the client device.
+*   The command-line interface would allow users to start and stop playback, as well as adjust various settings such as the communication protocol, video resolution, and volume. It would also provide feedback on the status of the client and its components.
 
-**File structure:**
+**File structure**:
 
-```
-client/
-├── main.c
-├── client.c
-├── playback.c
-└── protocol.c
-```
+*   `main.c`: Contains the main function that initializes the GStreamer library, creates a new pipeline object, and sets up the command-line interface.
+*   `client.c`: Contains code for the client component of the pipeline, including functions for communication with the server using one of the supported protocols.
+*   `decoder.c`: Contains code for the decoding component of the pipeline, including functions for decoding received audio and video data.
+*   `player.c`: Contains code for the player component of the pipeline, including functions for handling audio and video playback on the client device.
+*   `pipeline.c`: Contains code for creating and managing the GStreamer pipeline object.
+*   `cli.c`: Contains code for implementing the command-line interface, including functions for parsing user input, executing commands, and providing feedback on the status of the client and its components.
 
 **Further Description**
 
