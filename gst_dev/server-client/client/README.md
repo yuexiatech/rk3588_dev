@@ -1,22 +1,42 @@
 **Client side outline**:
-
-*   The client program would have a main function that initializes the GStreamer library, creates a new pipeline object, and sets up the command-line interface.
-*   The pipeline would consist of several components, including a client component for communication with the server using one of the supported protocols (RTP, RTSP, RTMP), a decoding component for decoding received audio and video data, and a player component for handling audio and video playback on the client device.
-*   The client component would establish a connection with the server and receive audio and video data.
-*   The decoding component would select appropriate decoder elements for the H.264/H.265 codecs.
-*   The player component would handle audio and video playback on the client device.
-*   The command-line interface would allow users to start and stop playback, as well as adjust various settings such as the communication protocol, video resolution, and volume. It would also provide feedback on the status of the client and its components.
+1.  The client would have a main pipeline that receives data from the server using one of the supported communication protocols, such as RTP, RTSP, or RTMP.
+    
+2.  For streaming, the client would use the appropriate protocol-specific source elements to receive data from the server.
+    
+3.  For video-on-demand, the client would use the `playbin` element to play back stored files received from the server.
+    
+4.  The client would have a command-line interface using standard C libraries or third-party libraries. This interface would allow users to control the application by passing command-line arguments when starting it.
 
 **File structure**:
 
-*   `main.c`: Contains the main function that initializes the GStreamer library, creates a new pipeline object, and sets up the command-line interface.
-*   `client.c`: Contains code for the client component of the pipeline, including functions for communication with the server using one of the supported protocols.
-*   `decoder.c`: Contains code for the decoding component of the pipeline, including functions for decoding received audio and video data.
-*   `player.c`: Contains code for the player component of the pipeline, including functions for handling audio and video playback on the client device.
-*   `pipeline.c`: Contains code for creating and managing the GStreamer pipeline object.
-*   `cli.c`: Contains code for implementing the command-line interface, including functions for parsing user input, executing commands, and providing feedback on the status of the client and its components.
+```
+client/
+├── src/
+│   ├── main.c
+│   ├── pipeline.c
+│   ├── protocols.c
+│   ├── playback.c
+│   └── cli.c
+├── include/
+│   ├── pipeline.h
+│   ├── protocols.h
+│   ├── playback.h
+│   └── cli.h
+├── bin/
+├── data/
+├── config/
+├── Makefile
+└── README.md
+```
 
-**Further Description**
+*   `main.c`: This file would contain the `main` function, which would parse the command-line arguments and initialize the different components of the application.
+    
+*   `pipeline.c` and `pipeline.h`: These files would contain the code for creating and managing the main GStreamer pipeline. This would include functions for creating and linking the different elements, handling events, and controlling the pipeline state.
+    
+*   `protocols/`: This directory would contain files for implementing support for different communication protocols. Each protocol would have its own pair of `.c` and `.h` files, which would contain functions for creating and configuring the appropriate GStreamer elements.
+    
+*   `playback.c` and `playback.h`: These files would contain the code for implementing video playback. This would include functions for creating and configuring the `playbin` element, as well as managing playback controls such as play, pause, and seek.
+    
+*   `cli.c` and `cli.h`: These files would contain the code for implementing the command-line interface of the application. This would include functions for parsing command-line arguments and displaying help information.
 
-This pseudo code shows how the different components of the client side of the application interact with each other. The `main.c` file initializes GStreamer and sets up the main loop. The `client.c` file sets up the pipeline for capturing and sending data to the server. The `playback.c` file handles playback requests from the server. The `protocol.c` file sets up communication with the server using different protocols.
 

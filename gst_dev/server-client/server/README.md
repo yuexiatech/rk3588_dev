@@ -1,21 +1,65 @@
 **Server side outline**:
 
-*   The server program would have a main function that initializes the GStreamer library, creates a new pipeline object, and sets up the command-line interface.
-*   The pipeline would consist of several components, including a server component for communication with multiple clients using supported protocols (RTP, RTSP, RTMP), an encoding component for encoding input audio and video data using H.264/H.265 codecs and converting the video to multiple bitrates, and a content manager component for handling client requests for on-demand content.
-*   The server component would accept incoming connections from clients and manage the distribution of audio and video data to each client.
-*   The encoding component would allow the server application to dynamically adjust the bitrate of the video streams sent to each client based on their network conditions and Quality of Service (QoS) requirements.
-*   The content manager component would manage stored content and serve it to clients upon request.
-*   The command-line interface would allow users to start and stop the server, as well as adjust various settings such as the communication protocol, video resolution, and bitrate. It would also provide feedback on the status of the server and its components.
+1.  The server would have a main pipeline that handles the communication between an encoder and a decoder. This pipeline would use `appsrc` and `appsink` elements to facilitate the transfer of audio and video data between the encoder and decoder boards.
+    
+2.  The main pipeline would also include elements for supporting multiple communication protocols, such as RTP, RTSP, and RTMP. These elements would be used to send data using these protocols.
+    
+3.  The server would also have a storage component that uses `filesink` element to save the encoded data to a file for later playback.
+    
+4.  The main pipeline would also include elements for implementing video conversion and generation at multiple bitrates. It would use encoding elements to encode the raw video data at different bitrates, `videorate` element to change the framerate of the video, and `videoscale` element to change its resolution.
+    
+5.  The server would have a network bandwidth detection and bitrate selection component that uses QoS events to monitor the network conditions and adjust the bitrate of the encoded video accordingly.
+    
+6.  The server would have a command-line interface using standard C libraries or third-party libraries. This interface would allow users to control the application by passing command-line arguments when starting it.
+    
+7.  The main pipeline would also include elements for supporting 4K resolution and H.264/H.265 encoding through elements such as `x264enc` and `x265enc`.
+    
+8.  The server would have a video-on-demand service component that supports multiple users using `playbin` element in combination with a server application. The server application would handle incoming requests from clients, manage resources, and create new instances of `playbin` element as needed.
+    
 
 **Possible file structure**:
+```
+server/
+├── src/
+│   ├── main.c
+│   ├── pipeline.c
+│   ├── protocols.c
+│   ├── storage.c
+│   ├── conversion.c
+│   ├── bandwidth.c
+│   ├── cli.c
+│   └── vod.c
+├── include/
+│   ├── pipeline.h
+│   ├── protocols.h
+│   ├── storage.h
+│   ├── conversion.h
+│   ├── bandwidth.h
+│   ├── cli.h
+│   └── vod.h
+├── bin/
+├── data/
+├── config/
+├── Makefile
+└── README.md
+```
 
-*   `main.c`: Contains the main function that initializes the GStreamer library, creates a new pipeline object, and sets up the command-line interface.
-*   `server.c`: Contains code for the server component of the pipeline, including functions for communication with multiple clients using supported protocols.
-*   `encoder.c`: Contains code for the encoding component of the pipeline, including functions for encoding input audio and video data using H.264/H.265 codecs and converting the video to multiple bitrates.
-*   `content_manager.c`: Contains code for the content manager component of the pipeline, including functions for managing stored content and serving it to clients upon request.
-*   `pipeline.c`: Contains code for creating and managing the GStreamer pipeline object.
-*   `cli.c`: Contains code for implementing the command-line interface, including functions for parsing user input, executing commands, and providing feedback on the status of the server and its components.
+*   `main.c`: This file would contain the `main` function, which would parse the command-line arguments and initialize the different components of the application.
+    
+*   `pipeline.c` and `pipeline.h`: These files would contain the code for creating and managing the main GStreamer pipeline. This would include functions for creating and linking the different elements, handling events, and controlling the pipeline state.
+    
+*   `protocols/`: This directory would contain files for implementing support for different communication protocols. Each protocol would have its own pair of `.c` and `.h` files, which would contain functions for creating and configuring the appropriate GStreamer elements.
+    
+*   `storage.c` and `storage.h`: These files would contain the code for implementing the storage component of the application. This would include functions for creating and configuring the `filesink` element, as well as managing the storage of encoded data.
+    
+*   `conversion.c` and `conversion.h`: These files would contain the code for implementing video conversion and generation at multiple bitrates. This would include functions for creating and configuring encoding elements, as well as managing video conversion parameters such as bitrate, framerate, and resolution.
+    
+*   `bandwidth.c` and `bandwidth.h`: These files would contain the code for implementing network bandwidth detection and bitrate selection. This would include functions for handling QoS events, monitoring network conditions, and adjusting the bitrate of encoded video.
+    
+*   `cli.c` and `cli.h`: These files would contain the code for implementing the command-line interface of the application. This would include functions for parsing command-line arguments and displaying help information.
+    
+*   `vod/`: This directory would contain files for implementing the video-on-demand service component of the application. This would include functions for handling incoming requests from clients, managing resources, and creating new instances of `playbin` element.
+    
 
-**Further Description**
+This is just one possible way to organize the code. The key is to keep each module focused on a specific functionality, with well-defined interfaces between them. This will help to achieve high cohesion within each module, while minimizing coupling between them.
 
-* This pseudo code shows how the different `.c` files interact with each other to receive, store, and playback data. The `main.c` file sets up the GStreamer pipeline and starts the main loop. The `network.c` file contains code for receiving data from clients and sending it to the storage component, as well as sending data to clients. The `storage.c` file contains code for saving and retrieving data from disk. The `playback.c` file contains code for reading data from disk, transcoding it into the desired format, and sending it to clients. Finally, the `request_handler.c` file contains code for handling client requests, such as starting and stopping streams, seeking within streams, and adjusting playback parameters.

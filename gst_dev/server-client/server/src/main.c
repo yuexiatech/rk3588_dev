@@ -1,5 +1,6 @@
 #include "pipeline.h"
 #include "cli.h"
+#include <gst/gst.h>
 
 int main(int argc, char *argv[]) {
     // Parse command-line arguments
