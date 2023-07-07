@@ -18,6 +18,8 @@ int main(int argc, char *argv[]) {
   converter1 = gst_element_factory_make ("videoconvert", "converter1");
   converter2 = gst_element_factory_make ("videoscale", "converter2");
   mixer = gst_element_factory_make ("videomixer", "mixer");
+  g_print ("Mixer type: %s\n", G_OBJECT_TYPE_NAME (mixer));
+
   queue1 = gst_element_factory_make ("queue", "queue1");
   queue2 = gst_element_factory_make ("queue", "queue2");
   encoder = gst_element_factory_make ("x264enc", "encoder");
