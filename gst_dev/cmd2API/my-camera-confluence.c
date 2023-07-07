@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
 
   
     /* Set the sink properties */
-    g_object_set (sink,"location","output.mp4" ,NULL);
+    g_object_set (sink,"location","/tmp/output.mp4" ,NULL);
 
     /* Build the pipeline */
     gst_bin_add_many (GST_BIN (pipeline), source1, filter1, converter1, queue1,mixer ,encoder,muxer,sink,NULL);
