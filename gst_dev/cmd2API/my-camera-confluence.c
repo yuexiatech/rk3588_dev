@@ -46,43 +46,43 @@ int main(int argc, char *argv[]) {
     }
   
   if (!gst_element_link_many (source2, filter2, NULL)) {
-    g_printerr ("Elements could not be linked.\n");
+    g_printerr ("Failed to link source2 -> filter2.\n");
     gst_object_unref (pipeline);
     return -1;
   }
   
   if (!gst_element_link_many (queue1,mixer, NULL)) {
-    g_printerr ("Elements could not be linked.\n");
+    g_printerr ("Failed to link queue1 -> mixer.\n");
     gst_object_unref (pipeline);
     return -1;
   }
   
    if (!gst_element_link_many (mixer,sink, NULL)) {
-    g_printerr ("Elements could not be linked.\n");
+    g_printerr ("Failed to link mixer -> sink.\n");
     gst_object_unref (pipeline);
     return -1;
    }
 
    if (!gst_element_link_many (encoder,muxer,sink, NULL)) {
-    g_printerr ("Elements could not be linked.\n");
+    g_printerr ("Failed to link encoder -> muxer -> sink.\n");
     gst_object_unref (pipeline);
     return -1;
    }
 
    if (!gst_element_link_many (queue2,mixer, NULL)) {
-    g_printerr ("Elements could not be linked.\n");
+    g_printerr ("Failed to link queue2 -> mixer.\n");
     gst_object_unref (pipeline);
     return -1;
    }
 
    if (!gst_element_link_many (mixer,sink, NULL)) {
-    g_printerr ("Elements could not be linked.\n");
+    g_printerr ("Failed to link mixer -> sink.\n");
     gst_object_unref (pipeline);
     return -1;
    }
 
    if (!gst_element_link_many (encoder,muxer,sink, NULL)) {
-    g_printerr ("Elements could not be linked.\n");
+    g_printerr ("Failed to link encoder -> muxer-> sink.\n");
     gst_object_unref (pipeline);
     return -1;
    }
