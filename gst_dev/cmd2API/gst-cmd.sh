@@ -10,14 +10,15 @@ apt-get install gst-rtsp-server
 gst-launch-1.0 v4l2src device=/dev/video31 ! videoconvert! videoscale ! video/x-raw, width=800, height=600 ! autovideosink 
 
 ## stream with hardware
-gst-launch-1.0 v4l2src device=/dev/video31 num-buffers=100 ! video/x-raw,format=NV12,width=1920,height=1088,framerate=30/1 ! videoconvert ! mpph264enc ! h264parse ! mp4mux ! filesink location=/tmp/h264.mp4
+gst-launch-1.0 v4l2src device=/dev/video31 num-buffers=100 ! video/x-raw,format=NV12,width=800,height=600,framerate=30/1 ! videoconvert ! mpph264enc ! h264parse ! mp4mux ! filesink location=/tmp/h264.mp4
 
 ## picture 
-gst-launch-1.0 -v v4l2src device=/dev/video31 num-buffers=10 ! video/x-raw,format=NV12,width=1920,height=1080 ! mppjpegenc ! multifilesink location=/tmp/test.jpg
+gst-launch-1.0 -v v4l2src device=/dev/video31 num-buffers=10 ! video/x-raw,format=NV12,width=800,height=600 ! mppjpegenc ! multifilesink location=/tmp/test.jpg
 
-## USB camera play
+# eSP570
+## stream
 gst-launch-1.0 v4l2src device=/dev/video41 ! image/jpeg,width=640,height=480,framerate=30/1 ! jpegdec ! autovideosink
-## USB camera record
+## record
 gst-launch-1.0 v4l2src device=/dev/video41 ! image/jpeg,width=640,height=480,framerate=30/1 ! filesink location=video.mjpg
 
 # camera video push
@@ -103,3 +104,8 @@ sink_1::xpos=0 sink_1::ypos=240 sink_1::alpha=1 \
 ! autovideosink qos=true \
 v4l2src device=/dev/video31 ! videoconvert! videoscale ! video/x-raw, width=320, height=240 ! mix.sink_0 \
 v4l2src device=/dev/video41 ! image/jpeg,width=320,height=240,framerate=30/1 ! jpegdec ! mix.sink_1
+
+gst-launch-1.0 -e \
+    v4l2src device=/dev/video31 num-buffers=100 ! video/x-raw,format=NV12,width=800,height=600,framerate=30/1 ! videoconvert ! queue ! videomixer name=mix sink_0::xpos=0 sink_0::ypos=0 sink_1::xpos=800 sink_1::ypos=0 ! x264enc ! mp4mux ! filesink location=/tmp/output.mp4 \
+    v4l2src device=/dev/video41 ! image/jpeg,width=640,height=480,framerate=30/1 ! jpegdec ! videoscale ! video/x-raw,width=800,height=600 ! queue ! mix.
+
