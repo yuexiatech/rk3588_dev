@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
 
   gst_bin_add_many (GST_BIN (pipeline), source1, source2, filter1, filter2, converter, queue1, queue2, mixer, encoder, muxer, sink, NULL);
   
-  if (!gst_element_link_many (source1, filter1, converter, queue1)) {
+  if (!gst_element_link_many (source1, filter1, converter, queue1, NULL)) {
     g_printerr ("Elements could not be linked.\n");
     gst_object_unref (pipeline);
     return -1;
