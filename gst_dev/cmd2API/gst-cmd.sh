@@ -96,7 +96,7 @@ filesrc location = Tennis1080p_200.mp4 ! decodebin ! videoscale ! video/x-raw,wi
 filesrc location = Tennis1080p_500.mp4 ! decodebin ! videoscale ! video/x-raw,width=320,height=240 ! mix.sink_2 \
 v4l2src device=/dev/video31 ! videoconvert! videoscale ! video/x-raw, width=320, height=240 ! mix.sink_3
 
-# double camera
+# double camera stream
 gst-launch-1.0  \
 videomixer name=mix \
 sink_0::xpos=0 sink_0::ypos=0 sink_0::alpha=1 \
@@ -104,7 +104,7 @@ sink_1::xpos=0 sink_1::ypos=240 sink_1::alpha=1 \
 ! autovideosink qos=true \
 v4l2src device=/dev/video31 ! videoconvert! videoscale ! video/x-raw, width=320, height=240 ! mix.sink_0 \
 v4l2src device=/dev/video41 ! image/jpeg,width=320,height=240,framerate=30/1 ! jpegdec ! mix.sink_1
-
+# double camera record
 gst-launch-1.0 -e \
     v4l2src device=/dev/video31 ! video/x-raw,format=NV12,width=800,height=600,framerate=30/1 ! videoconvert ! queue ! videomixer name=mix sink_0::xpos=0 sink_0::ypos=0 sink_1::xpos=800 sink_1::ypos=0 ! x264enc ! mp4mux ! filesink location=/tmp/output.mp4 \
     v4l2src device=/dev/video41 ! image/jpeg,width=640,height=480,framerate=30/1 ! jpegdec ! videoscale ! video/x-raw,width=800,height=600 ! queue ! mix.
