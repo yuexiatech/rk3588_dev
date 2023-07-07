@@ -5,8 +5,15 @@ apt-get install gstreamer1.0-plugins-bad
 apt-get install gstreamer1.0-plugins-good
 apt-get install gst-rtsp-server
 
-# camera play
+# ov13855
+## stream
 gst-launch-1.0 v4l2src device=/dev/video31 ! videoconvert! videoscale ! video/x-raw, width=800, height=600 ! autovideosink 
+
+## stream with hardware
+gst-launch-1.0 v4l2src device=/dev/video31 num-buffers=100 ! video/x-raw,format=NV12,width=1920,height=1088,framerate=30/1 ! videoconvert ! mpph264enc ! h264parse ! mp4mux ! filesink location=/tmp/h264.mp4
+
+## picture 
+gst-launch-1.0 -v v4l2src device=/dev/video31 num-buffers=10 ! video/x-raw,format=NV12,width=1920,height=1080 ! mppjpegenc ! multifilesink location=/tmp/test.jpg
 
 ## USB camera play
 gst-launch-1.0 v4l2src device=/dev/video41 ! image/jpeg,width=640,height=480,framerate=30/1 ! jpegdec ! autovideosink
