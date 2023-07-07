@@ -63,11 +63,15 @@ int main(int argc, char *argv[]) {
     return -1;
    }
 
-   if (!gst_element_link_many (encoder,muxer,sink, NULL)) {
-    g_printerr ("Failed to link encoder -> muxer -> sink.\n");
+if (!gst_element_link_many (encoder, muxer, sink, NULL)) {
+    GstCaps *caps = gst_pad_query_caps (gst_element_get_static_pad (encoder, "src"), NULL);
+    gchar *str = gst_caps_to_string (caps);
+    g_printerr ("Failed to link encoder -> muxer -> sink. Encoder src caps: %s\n", str);
+    g_free (str);
+    gst_caps_unref (caps);
     gst_object_unref (pipeline);
     return -1;
-   }
+}
 
    if (!gst_element_link_many (queue2,mixer, NULL)) {
     g_printerr ("Failed to link queue2 -> mixer.\n");
