@@ -3,6 +3,7 @@
 int main(int argc, char *argv[]) {
   GstElement *pipeline, *source1, *source2, *filter1, *filter2, *decoder, *converter1, *converter2, *mixer, *queue1, *queue2, *encoder, *muxer, *sink;
   GstCaps *filtercaps1, *filtercaps2;
+  GstPad *sinkpad;
   GstBus *bus;
   GstMessage *msg;
 
@@ -18,8 +19,6 @@ int main(int argc, char *argv[]) {
   converter1 = gst_element_factory_make ("videoconvert", "converter1");
   converter2 = gst_element_factory_make ("videoscale", "converter2");
   mixer = gst_element_factory_make ("videomixer", "mixer");
-  g_print ("Mixer type: %s\n", G_OBJECT_TYPE_NAME (mixer));
-
   queue1 = gst_element_factory_make ("queue", "queue1");
   queue2 = gst_element_factory_make ("queue", "queue2");
   encoder = gst_element_factory_make ("x264enc", "encoder");
@@ -36,43 +35,44 @@ int main(int argc, char *argv[]) {
 
   /* Set the source properties */
   g_object_set (source1, "device", "/dev/video31", NULL);
-  g_object_set (source1, "num-buffers", 100, NULL);
   
-  g_object_set (source2, "device", "/dev/video41", NULL);
+    g_object_set (source2, "device","/dev/video41" ,NULL);
 
-  /* Set the filter properties */
-  filtercaps1 = gst_caps_from_string("video/x-raw,format=NV12,width=800,height=600,framerate=30/1");
-  g_object_set (filter1, "caps", filtercaps1, NULL);
-  
-  filtercaps2 = gst_caps_from_string("image/jpeg,width=640,height=480,framerate=30/1");
-  g_object_set (filter2, "caps", filtercaps2, NULL);
-
-  /* Set the mixer properties */
-  g_object_set (mixer, "sink_0::xpos", 0, NULL);
-  g_object_set (mixer, "sink_0::ypos", 0, NULL);
-  
-    g_object_set (mixer, "sink_1::xpos",800 , NULL);
-    g_object_set (mixer,"sink_1::ypos" ,0 , NULL);
-
-  
+    /* Set the filter properties */
+    filtercaps1=gst_caps_from_string("video/x-raw,width=320,height=240");
+    g_object_set(filter1,"caps" ,filtercaps1,NULL);
+    
+    filtercaps2=gst_caps_from_string("image/jpeg,width=320,height=240,framerate=30/1");
+    g_object_set(filter2,"caps" ,filtercaps2,NULL);
+    
+    /* Set the mixer properties */
+    sinkpad=gst_element_get_static_pad(mixer,"sink_0");
+    g_object_set(sinkpad,"xpos" ,0,"ypos" ,0,NULL);
+    gst_object_unref(sinkpad);
+    
+    sinkpad=gst_element_get_request_pad(mixer,"sink_1");
+    g_object_set(sinkpad,"xpos" ,0,"ypos" ,240,NULL);
+    gst_object_unref(sinkpad);
+    
     /* Set the sink properties */
-    g_object_set (sink,"location","/tmp/output.mp4" ,NULL);
+    g_object_set(sink,"location","output.mp4" ,NULL);
 
     /* Build the pipeline */
-    gst_bin_add_many (GST_BIN (pipeline), source1, filter1, converter1, queue1,mixer ,encoder,muxer,sink,NULL);
-    if (gst_element_link_many (source1 ,filter1 ,converter1 ,queue1 ,mixer,NULL) != TRUE) {
+    gst_bin_add_many(GST_BIN(pipeline), source1 ,filter1 ,converter1 ,queue1,mixer,NULL);
+    if(gst_element_link_many(source1 ,filter1 ,converter1 ,queue1,mixer,NULL) != TRUE){
         g_printerr("Elements could not be linked.\n");
         gst_object_unref(pipeline);
         return -1;
     }
     
-    gst_bin_add_many(GST_BIN(pipeline), source2 ,filter2 ,decoder ,converter2 ,queue2,NULL);
+    gst_bin_add_many(GST_BIN(pipeline), source2 ,filter2 ,decoder ,converter2 ,queue2,mixer,NULL);
     if(gst_element_link_many(source2 ,filter2 ,decoder ,converter2 ,queue2,mixer,NULL) != TRUE){
         g_printerr("Elements could not be linked.\n");
         gst_object_unref(pipeline);
         return -1;
     }
     
+    gst_bin_add_many(GST_BIN(pipeline), mixer ,encoder,muxer,sink,NULL);
     if(gst_element_link_many(mixer ,encoder,muxer,sink,NULL) != TRUE){
         g_printerr("Elements could not be linked.\n");
         gst_object_unref(pipeline);
