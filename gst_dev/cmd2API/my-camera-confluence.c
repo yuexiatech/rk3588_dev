@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
     return -1;
   }
   
-  if (!gst_element_link_many (queue1,mixer)) {
+  if (!gst_element_link_many (queue1, mixer, NULL)) {
     g_printerr ("Elements could not be linked.\n");
     gst_object_unref (pipeline);
     return -1;
