@@ -57,22 +57,21 @@ if (gst_element_link_many (source1, filter1, converter, queue1,mixer,NULL) != TR
         g_printerr ("Elements0 could not be linked.\n");
         gst_object_unref (pipeline);
         return -1;
-        if(gst_element_link_many (source2, filter2,mixer,NULL) != TRUE )
-        {
-            g_printerr ("Elements1 could not be linked.\n");
-            gst_object_unref (pipeline);
-            return -1;
-
-            if(gst_element_link_many (mixer , encoder,muxer,sink,NULL) != TRUE)
-            {
-                g_printerr ("Elements2 could not be linked.\n");
-                gst_object_unref (pipeline);
-                return -1;
-            }
-        }
     }
-    
 
+if(gst_element_link_many (source2, filter2,mixer,NULL) != TRUE )
+{
+    g_printerr ("Elements1 could not be linked.\n");
+    gst_object_unref (pipeline);
+    return -1;
+}
+
+if(gst_element_link_many (mixer , encoder,muxer,sink,NULL) != TRUE)
+{
+    g_printerr ("Elements2 could not be linked.\n");
+    gst_object_unref (pipeline);
+    return -1;
+}
 /* Set properties on mixer pads */
 GstPad *mixer_sink_pad_0 = gst_element_get_static_pad(mixer,"sink_0");
 g_object_set(mixer_sink_pad_0,"xpos",0,"ypos",0,NULL);
