@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
 
   /* Set the device property on the v4l2src element */
   g_object_set (source1, "device", "/dev/video31", NULL);
-  g_object_set (source2, "device", "/dev/video32", NULL);
+  g_object_set (source2, "device", "/dev/video41", NULL);
 
   /* Set the location property on the filesink element */
   g_object_set (sink, "location", "/tmp/output.mp4", NULL);
@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
   /* Set the caps for the capsfilter elements */
   filter1_caps = gst_caps_from_string("video/x-raw,format=NV12,width=800,height=600,framerate=30/1");
   g_object_set (G_OBJECT (filter1), "caps", filter1_caps, NULL);
-  filter2_caps = gst_caps_from_string("video/x-raw,format=NV12,width=800,height=600,framerate=30/1");
+  filter2_caps = gst_caps_from_string("image/jpeg,width=800,height=600,framerate=30/1");
   g_object_set (G_OBJECT (filter2), "caps", filter2_caps, NULL);
 
   /* Build the pipeline */
