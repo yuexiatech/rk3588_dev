@@ -12,6 +12,8 @@ int main(int argc, char *argv[]) {
   GstBus *bus;
   GstMessage *msg;
 
+  gst_debug_set_default_threshold(GST_LEVEL_INFO);
+
   /* Initialize GStreamer */
   gst_init (&argc, &argv);
 
