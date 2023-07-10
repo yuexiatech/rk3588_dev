@@ -61,12 +61,12 @@ if (gst_element_link_many (source1, filter1, converter, queue1,mixer,NULL) != TR
         return -1;
     }
 
-if(gst_element_link_many (source2, filter2,mixer,NULL) != TRUE )
-{
-    g_printerr ("Elements1 could not be linked.\n");
-    gst_object_unref (pipeline);
-    return -1;
-}
+// if(gst_element_link_many (source2, filter2,mixer,NULL) != TRUE )
+// {
+//     g_printerr ("Elements1 could not be linked.\n");
+//     gst_object_unref (pipeline);
+//     return -1;
+// }
 
 if(gst_element_link_many (mixer , encoder,muxer,sink,NULL) != TRUE)
 {
