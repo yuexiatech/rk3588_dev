@@ -23,7 +23,7 @@ gst-launch-1.0 v4l2src device=/dev/video41 ! image/jpeg,width=640,height=480,fra
 
 # camera video push
 gst-launch-1.0 -v v4l2src device=/dev/video31 ! video/x-raw,width=640,height=480,framerate=30/1 ! x264enc ! rtph264pay ! udpsink host=192.168.8.90 port=5000
-# camera video  recieve
+# camera video recieve
 gst-launch-1.0 -v udpsrc port=5000 ! application/x-rtp, encoding-name=H264,payload=96 ! rtph264depay ! avdec_h264 ! videoconvert ! autovideosink
 
 # .mp4 push - RTP
@@ -111,7 +111,7 @@ gst-launch-1.0 -e \
 
 # double ov13855(duplicate)
 gst-launch-1.0 -e \
-    v4l2src device=/dev/video31 ! video/x-raw,format=NV12,width=800,height=600,framerate=30/1 ! videoconvert ! queue ! videomixer name=mix sink_0::xpos=0 sink_0::ypos=0 sink_1::xpos=800 sink_1::ypos=0 ! mpph264enc ! h264parse! mp4mux ! filesink location=/tmp/output.mp4 \
+    v4l2src device=/dev/video31 ! video/x-raw,format=NV12,width=800,height=600,framerate=30/1 ! videoconvert ! queue ! videomixer name=mix sink_0::xpos=0 sink_0::ypos=0 sink_1::xpos=800 sink_1::ypos=0 ! x264enc ! mp4mux ! filesink location=/tmp/output.mp4 \
     v4l2src device=/dev/video32 ! video/x-raw,format=NV12,width=800,height=600,framerate=30/1 ! videoconvert ! queue ! mix.
 
 # contencate first, sink later(not working)
@@ -122,3 +122,8 @@ sink_1::xpos=0 sink_1::ypos=240 sink_1::alpha=1 \
 ! x264enc ! mp4mux ! filesink location=/tmp/output.mp4 \
 v4l2src device=/dev/video31 ! videoconvert! videoscale ! video/x-raw, width=320, height=240 ! mix.sink_0 \
 v4l2src device=/dev/video41 ! image/jpeg,width=320,height=240,framerate=30/1 ! jpegdec ! mix.sink_1
+
+# video and audio confluence(havent test)
+gst-launch-1.0 -e \
+filesrc location=input_video.mp4 ! qtdemux name=demux  demux.video_0 ! h264parse ! avdec_h264 ! videoconvert ! x264enc ! mp4mux name=mux  \
+filesrc location=input_audio.wav ! decodebin ! audioconvert ! voaacenc ! queue ! mux. mux. ! filesink location=output.mp4
