@@ -1,7 +1,7 @@
 #include <gst/gst.h>
 
 int main(int argc, char *argv[]) {
-  GstElement *pipeline, *v4l2src1, *v4l2src2;
+  GstElement *pipeline, *v4l2src1, *v4l2src2, *videomixer;
   GstBus *bus;
   GstMessage *msg;
 
@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
     v4l2src name=src1 device=/dev/video31 ! video/x-raw,format=NV12,width=800,height=600,framerate=30/1 ! videoconvert ! queue ! videomixer name=mix sink_0::xpos=0 sink_0::ypos=0 sink_1::xpos=800 sink_1::ypos=0 ! x264enc ! mp4mux name=mux ! filesink location=/tmp/output.mp4 \
     v4l2src name=src2 device=/dev/video32 ! video/x-raw,format=NV12,width=800,height=600,framerate=30/1 ! videoconvert ! queue ! mix.", NULL);
 
-  /* Set group-id property of v4l2src elements */
+  /* Set group-id property of v4l2src and videomixer elements */
   v4l2src1 = gst_bin_get_by_name (GST_BIN (pipeline), "src1");
   g_object_set (v4l2src1, "group-id", 1, NULL);
   gst_object_unref (v4l2src1);
@@ -21,6 +21,10 @@ int main(int argc, char *argv[]) {
   v4l2src2 = gst_bin_get_by_name (GST_BIN (pipeline), "src2");
   g_object_set (v4l2src2, "group-id", 1, NULL);
   gst_object_unref (v4l2src2);
+
+  videomixer = gst_bin_get_by_name (GST_BIN (pipeline), "mix");
+  g_object_set (videomixer, "group-id", 1, NULL);
+  gst_object_unref (videomixer);
 
   /* Set reserved-moov-update-period property of mp4mux */
   GstElement *mp4mux = gst_bin_get_by_name (GST_BIN (pipeline), "mux");
