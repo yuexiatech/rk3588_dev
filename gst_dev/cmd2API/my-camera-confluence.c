@@ -36,35 +36,50 @@ int main(int argc, char *argv[]) {
   filter2_caps = gst_caps_from_string("image/jpeg,width=640,height=480,framerate=30/1");
   g_object_set (filter2, "caps", filter2_caps, NULL);
 
-  gst_bin_add_many (GST_BIN (pipeline), source1, source2, filter1, filter2, converter, queue1, queue2, mixer, encoder, muxer, sink, NULL);
-  
-  if (!gst_element_link_many (source1, filter1, converter, queue1,mixer,NULL)) {
-    g_printerr ("Elements could not be linked.\n");
-    gst_object_unref (pipeline);
-    return -1;
-  }
-  
-   if (!gst_element_link_many (source2, filter2,gst_element_factory_make("jpegdec","jpegdec"),gst_element_factory_make("videoscale","videoscale"),gst_element_factory_make("capsfilter","capsfilter3"),queue2,mixer,NULL)) {
-    g_printerr ("Elements could not be linked.\n");
-    gst_object_unref (pipeline);
-    return -1;
+   GstElement* jpegdec = gst_element_factory_make("jpegdec","jpegdec");
+   GstElement* videoscale = gst_element_factory_make("videoscale","videoscale");
+   GstElement* capsfilter3 = gst_element_factory_make("capsfilter","capsfilter3");
+   GstCaps* caps3 = gst_caps_from_string("video/x-raw,width=800,height=600");
+   g_object_set(capsfilter3,"caps",caps3,NULL);
+   
+   GstElement* x264enc = gst_element_factory_make("x264enc","x264enc");
+   GstElement* mp4mux = gst_element_factory_make("mp4mux","mp4mux");
+
+   if(!jpegdec||!videoscale||!capsfilter3||!x264enc||!mp4mux){
+       g_printerr("Failed to create elements\n");
+       return -1;
    }
    
-   if (!gst_element_link_many (mixer,gst_element_factory_make("x264enc","x264enc"),gst_element_factory_make("mp4mux","mp4mux"),sink,NULL)) {
-    g_printerr ("Elements could not be linked.\n");
-    gst_object_unref (pipeline);
-    return -1;
+   gst_bin_add_many(GST_BIN(pipeline),source1,source2,filter1,filter2,jpegdec,videoscale,capsfilter3,x264enc,mp4mux,sink,NULL);
+   
+   if(!gst_element_link_many(source1,filter1,NULL)){
+       g_printerr("Failed to link elements\n");
+       return -1;
    }
-
-   GstPad* sinkpad = gst_element_get_static_pad(mixer,"sink_0");
-   GstPad* srcpad = gst_element_get_static_pad(queue1,"src");
+   
+   if(!gst_element_link_many(source2,filter2,jpegdec,videoscale,capsfilter3,NULL)){
+       g_printerr("Failed to link elements\n");
+       return -1;
+   }
+   
+   if(!gst_element_link_many(x264enc,mp4mux,sink,NULL)){
+       g_printerr("Failed to link elements\n");
+       return -1;
+   }
+   
+   GstPadTemplate* templ = gst_element_class_get_pad_template(GST_ELEMENT_GET_CLASS(mixer),"sink_%u");
+   
+   GstPad* sinkpad = gst_element_request_pad(mixer,templ,NULL,NULL);
+   GstPad* srcpad = gst_element_get_static_pad(filter1,"src");
+   
    if(gst_pad_link(srcpad,sinkpad)!=GST_PAD_LINK_OK){
        g_printerr("Failed to link pads\n");
        return -1;
    }
    
-   sinkpad = gst_element_get_request_pad(mixer,"sink_%u");
-   srcpad = gst_element_get_static_pad(queue2,"src");
+   sinkpad = gst_element_request_pad(mixer,templ,NULL,NULL);
+   srcpad = gst_element_get_static_pad(capsfilter3,"src");
+   
    if(gst_pad_link(srcpad,sinkpad)!=GST_PAD_LINK_OK){
        g_printerr("Failed to link pads\n");
        return -1;
@@ -72,9 +87,10 @@ int main(int argc, char *argv[]) {
    
    g_object_set(sinkpad,"xpos",(gint)800,NULL);
    g_object_set(sinkpad,"ypos",(gint)0,NULL);
-
+   
    gst_caps_unref(filter1_caps);
    gst_caps_unref(filter2_caps);
+   gst_caps_unref(caps3);
 
    gst_element_set_state(pipeline,GST_STATE_PLAYING);
 
