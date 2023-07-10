@@ -52,13 +52,26 @@ int main(int argc, char *argv[]) {
   /* Build the pipeline */
   gst_bin_add_many (GST_BIN (pipeline), source1, source2, filter1, filter2, converter, queue1, queue2, mixer, encoder, muxer, sink, NULL);
   
-if (gst_element_link_many (source1, filter1, converter, queue1,mixer,NULL) != TRUE ||
-      gst_element_link_many (source2, filter2,mixer,NULL) != TRUE ||
-      gst_element_link_many (mixer , encoder,muxer,sink,NULL) != TRUE) {
-    g_printerr ("Elements could not be linked.\n");
-    gst_object_unref (pipeline);
-    return -1;
-}
+if (gst_element_link_many (source1, filter1, converter, queue1,mixer,NULL) != TRUE) 
+    {
+        g_printerr ("Elements0 could not be linked.\n");
+        gst_object_unref (pipeline);
+        return -1;
+        if(gst_element_link_many (source2, filter2,mixer,NULL) != TRUE )
+        {
+            g_printerr ("Elements1 could not be linked.\n");
+            gst_object_unref (pipeline);
+            return -1;
+
+            if(gst_element_link_many (mixer , encoder,muxer,sink,NULL) != TRUE)
+            {
+                g_printerr ("Elements2 could not be linked.\n");
+                gst_object_unref (pipeline);
+                return -1;
+            }
+        }
+    }
+    
 
 /* Set properties on mixer pads */
 GstPad *mixer_sink_pad_0 = gst_element_get_static_pad(mixer,"sink_0");
