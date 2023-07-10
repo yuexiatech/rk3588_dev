@@ -7,7 +7,6 @@ int main(int argc, char *argv[]) {
   GstMessage *msg;
 
   gst_init (&argc, &argv);
-  gst_debug_set_default_threshold(GST_LEVEL_WARNING);
 
   source1 = gst_element_factory_make ("v4l2src", "source1");
   source2 = gst_element_factory_make ("v4l2src", "source2");
@@ -39,101 +38,73 @@ int main(int argc, char *argv[]) {
 
   gst_bin_add_many (GST_BIN (pipeline), source1, source2, filter1, filter2, converter, queue1, queue2, mixer, encoder, muxer, sink, NULL);
   
-    if (!gst_element_link_many (source1, filter1, converter, queue1, NULL, NULL)) {
-        g_printerr ("Failed to link source1 -> filter1 -> converter -> queue1.\n");
-        gst_object_unref (pipeline);
-        return -1;
-    }
-  
-  if (!gst_element_link_many (source2, filter2, NULL)) {
-    g_printerr ("Failed to link source2 -> filter2.\n");
+  if (!gst_element_link_many (source1, filter1, converter, queue1,mixer,NULL)) {
+    g_printerr ("Elements could not be linked.\n");
     gst_object_unref (pipeline);
     return -1;
   }
   
-  if (!gst_element_link_many (queue1,mixer, NULL)) {
-    g_printerr ("Failed to link queue1 -> mixer.\n");
+   if (!gst_element_link_many (source2, filter2,gst_element_factory_make("jpegdec","jpegdec"),gst_element_factory_make("videoscale","videoscale"),gst_element_factory_make("capsfilter","capsfilter3"),queue2,mixer,NULL)) {
+    g_printerr ("Elements could not be linked.\n");
     gst_object_unref (pipeline);
     return -1;
-  }
-  
-   if (!gst_element_link_many (mixer,sink, NULL)) {
-    g_printerr ("Failed to link mixer -> sink.\n");
+   }
+   
+   if (!gst_element_link_many (mixer,gst_element_factory_make("x264enc","x264enc"),gst_element_factory_make("mp4mux","mp4mux"),sink,NULL)) {
+    g_printerr ("Elements could not be linked.\n");
     gst_object_unref (pipeline);
     return -1;
    }
 
-if (!gst_element_link_many (encoder, muxer, sink, NULL)) {
-    GstCaps *caps = gst_pad_query_caps (gst_element_get_static_pad (encoder, "src"), NULL);
-    gchar *str = gst_caps_to_string (caps);
-    g_printerr ("Failed to link encoder -> muxer -> sink. Encoder src caps: %s\n", str);
-    g_free (str);
-    gst_caps_unref (caps);
-    gst_object_unref (pipeline);
-    return -1;
-}
+   GstPad* sinkpad = gst_element_get_static_pad(mixer,"sink_0");
+   GstPad* srcpad = gst_element_get_static_pad(queue1,"src");
+   if(gst_pad_link(srcpad,sinkpad)!=GST_PAD_LINK_OK){
+       g_printerr("Failed to link pads\n");
+       return -1;
+   }
+   
+   sinkpad = gst_element_get_request_pad(mixer,"sink_%u");
+   srcpad = gst_element_get_static_pad(queue2,"src");
+   if(gst_pad_link(srcpad,sinkpad)!=GST_PAD_LINK_OK){
+       g_printerr("Failed to link pads\n");
+       return -1;
+   }
+   
+   g_object_set(sinkpad,"xpos",(gint)800,NULL);
+   g_object_set(sinkpad,"ypos",(gint)0,NULL);
 
-   if (!gst_element_link_many (queue2,mixer, NULL)) {
-    g_printerr ("Failed to link queue2 -> mixer.\n");
-    gst_object_unref (pipeline);
-    return -1;
+   gst_caps_unref(filter1_caps);
+   gst_caps_unref(filter2_caps);
+
+   gst_element_set_state(pipeline,GST_STATE_PLAYING);
+
+   bus = gst_element_get_bus(pipeline);
+   msg = gst_bus_timed_pop_filtered(bus,GST_CLOCK_TIME_NONE,GST_MESSAGE_ERROR|GST_MESSAGE_EOS);
+
+   if(msg!=NULL){
+       GError *err;
+       gchar *debug_info;
+
+       switch(GST_MESSAGE_TYPE(msg)){
+           case GST_MESSAGE_ERROR:
+               gst_message_parse_error(msg,&err,&debug_info);
+               g_printerr("Error received from element %s: %s\n",GST_OBJECT_NAME(msg->src),err->message);
+               g_printerr("Debugging information: %s\n",debug_info?debug_info:"none");
+               g_clear_error(&err);
+               g_free(debug_info);
+               break;
+           case GST_MESSAGE_EOS:
+               g_print("End-Of-Stream reached.\n");
+               break;
+           default:
+               g_printerr("Unexpected message received.\n");
+               break;
+       }
+       gst_message_unref(msg);
    }
 
-   if (!gst_element_link_many (mixer,sink, NULL)) {
-    g_printerr ("Failed to link mixer -> sink.\n");
-    gst_object_unref (pipeline);
-    return -1;
-   }
-
-   if (!gst_element_link_many (encoder,muxer,sink, NULL)) {
-    g_printerr ("Failed to link encoder -> muxer-> sink.\n");
-    gst_object_unref (pipeline);
-    return -1;
-   }
-
-   GstPadTemplate *mixer_sink_pad_template;
-   GstPad *mixer_sink_pad_0,*mixer_sink_pad_1;
-
-   mixer_sink_pad_template = gst_element_class_get_pad_template(GST_ELEMENT_GET_CLASS(mixer), "sink_%u");
-
-   mixer_sink_pad_0 = gst_element_request_pad(mixer,mixer_sink_pad_template,NULL,NULL);
-   mixer_sink_pad_0 = gst_ghost_pad_new("sink_0",mixer_sink_pad_0);
-
-   mixer_sink_pad_0 = gst_element_request_pad(mixer,mixer_sink_pad_template,NULL,NULL);
-   mixer_sink_pad_0 = gst_ghost_pad_new("sink_1",mixer_sink_pad_1);
-
-   g_object_set(mixer_sink_pad_0,"xpos",0,"ypos",0,NULL);
-   g_object_set(mixer_sink_pad_1,"xpos",800,"ypos",0,NULL);
-
-  gst_element_set_state (pipeline, GST_STATE_PLAYING);
-
-  bus = gst_element_get_bus (pipeline);
-  msg = gst_bus_timed_pop_filtered (bus, GST_CLOCK_TIME_NONE, GST_MESSAGE_ERROR | GST_MESSAGE_EOS);
-
-  if (msg != NULL) {
-    GError *err;
-    gchar *debug_info;
-
-    switch (GST_MESSAGE_TYPE (msg)) {
-      case GST_MESSAGE_ERROR:
-        gst_message_parse_error (msg, &err, &debug_info);
-        g_printerr ("Error received from element %s: %s\n", GST_OBJECT_NAME (msg->src), err->message);
-        g_printerr ("Debugging information: %s\n", debug_info ? debug_info : "none");
-        g_clear_error (&err);
-        g_free (debug_info);
-        break;
-      case GST_MESSAGE_EOS:
-        g_print ("End-Of-Stream reached.\n");
-        break;
-      default:
-        g_printerr ("Unexpected message received.\n");
-        break;
-    }
-    gst_message_unref (msg);
-  }
-
-  gst_object_unref (bus);
-  gst_element_set_state (pipeline, GST_STATE_NULL);
-  gst_object_unref (pipeline);
-  return 0;
+   gst_object_unref(bus);
+   gst_element_set_state(pipeline,GST_STATE_NULL);
+   gst_object_unref(pipeline);
+   return 0;
 }
