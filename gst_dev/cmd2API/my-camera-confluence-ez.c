@@ -1,16 +1,22 @@
 #include <gst/gst.h>
 
 int main(int argc, char *argv[]) {
-  GstElement *pipeline;
+  GstElement *pipeline, *mp4mux;
   GstBus *bus;
   GstMessage *msg;
 
-  gst_debug_set_default_threshold(GST_LEVEL_WARNING);
   /* Initialize GStreamer */
   gst_init (&argc, &argv);
 
   /* Build the pipeline */
-  pipeline = gst_parse_launch ("v4l2src device=/dev/video31 ! video/x-raw,format=NV12,width=800,height=600,framerate=30/1 ! videoconvert ! queue ! videomixer name=mix sink_0::xpos=0 sink_0::ypos=0 sink_1::xpos=800 sink_1::ypos=0 ! x264enc ! mp4mux ! filesink location=/tmp/output.mp4 v4l2src device=/dev/video32 ! video/x-raw,format=NV12,width=800,height=600,framerate=30/1 ! videoconvert ! queue ! mix.", NULL);
+  pipeline = gst_parse_launch ("gst-launch-1.0 -e \
+    v4l2src device=/dev/video31 ! video/x-raw,format=NV12,width=800,height=600,framerate=30/1 ! videoconvert ! queue ! videomixer name=mix sink_0::xpos=0 sink_0::ypos=0 sink_1::xpos=800 sink_1::ypos=0 ! x264enc ! mp4mux name=mux ! filesink location=/tmp/output.mp4 \
+    v4l2src device=/dev/video32 ! video/x-raw,format=NV12,width=800,height=600,framerate=30/1 ! videoconvert ! queue ! mix.", NULL);
+
+  /* Set reserved-moov-update-period property of mp4mux */
+  mp4mux = gst_bin_get_by_name (GST_BIN (pipeline), "mux");
+  g_object_set (mp4mux, "reserved-moov-update-period", 1000000000, NULL);
+  gst_object_unref (mp4mux);
 
   /* Start playing */
   gst_element_set_state (pipeline, GST_STATE_PLAYING);
