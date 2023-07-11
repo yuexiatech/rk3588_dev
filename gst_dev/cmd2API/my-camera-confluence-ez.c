@@ -2,13 +2,13 @@
 
 static GstPadProbeReturn cb_event_probe (GstPad * pad, GstPadProbeInfo * info, gpointer user_data) {
   if (GST_EVENT_TYPE (GST_PAD_PROBE_INFO_DATA (info)) == GST_EVENT_STREAM_START) {
-    GstEvent *event = gst_event_copy (GST_PAD_PROBE_INFO_EVENT (info));
-    gst_event_set_stream_group_id (event, GPOINTER_TO_UINT (user_data));
+    GstEvent *event = gst_event_new_stream_start ("my-stream-id");
     gst_pad_push_event (pad, event);
     return GST_PAD_PROBE_DROP;
   }
   return GST_PAD_PROBE_OK;
 }
+
 
 int main(int argc, char *argv[]) {
   GstElement *pipeline, *v4l2src1, *v4l2src2;
