@@ -79,8 +79,8 @@ int main(int argc, char *argv[]) {
   }
 
   /* Set the xpos and ypos properties on the videomixer pads */
-  GstElement *mixer_sink_pad_0 = gst_element_get_static_pad(mixer,"sink_0");
-  GstElement *mixer_sink_pad_1 = gst_element_get_static_pad(mixer,"sink_1");
+  GstPad *mixer_sink_pad_0 = gst_element_get_static_pad(mixer,"sink_0");
+  GstPad *mixer_sink_pad_1 = gst_element_get_static_pad(mixer,"sink_1");
   
   g_object_set(mixer_sink_pad_0,"xpos",0,"ypos",0,NULL);
   g_object_set(mixer_sink_pad_1,"xpos",800,"ypos",0,NULL);
