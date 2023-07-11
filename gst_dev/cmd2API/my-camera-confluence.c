@@ -34,8 +34,8 @@ int main(int argc, char *argv[]) {
   g_object_set (source2, "device", "/dev/video32", NULL);
 
   /* Set the num-buffers property on the source elements */
-  g_object_set (source1, "num-buffers", 100, NULL);
-  g_object_set (source2, "num-buffers", 100, NULL);
+  g_object_set (source1, "num-buffers", 1000, NULL);
+  g_object_set (source2, "num-buffers", 1000, NULL);
 
   /* Create the caps */
   caps = gst_caps_new_simple ("video/x-raw",
