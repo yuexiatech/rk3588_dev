@@ -114,6 +114,10 @@ gst-launch-1.0 -e \
     v4l2src device=/dev/video31 ! video/x-raw,format=NV12,width=800,height=600,framerate=30/1 ! videoconvert ! queue ! videomixer name=mix sink_0::xpos=0 sink_0::ypos=0 sink_1::xpos=800 sink_1::ypos=0 ! x264enc ! mp4mux ! filesink location=/tmp/output.mp4 \
     v4l2src device=/dev/video32 ! video/x-raw,format=NV12,width=800,height=600,framerate=30/1 ! videoconvert ! queue ! mix.
 
+gst-launch-1.0 -e \
+    v4l2src device=/dev/video31 ! video/x-raw,format=NV12,width=800,height=600,framerate=30/1 ! videoconvert ! queue ! videomixer name=mix sink_0::xpos=0 sink_0::ypos=0 sink_1::xpos=800 sink_1::ypos=0 ! x264enc ! mp4mux reserved-moov-update-period=10 ! filesink location=/tmp/output.mp4 \
+    v4l2src device=/dev/video32 ! video/x-raw,format=NV12,width=800,height=600,framerate=30/1 ! videoconvert ! queue ! mix.
+
 # contencate first, sink later(not working)
 gst-launch-1.0  \
 videomixer name=mix \
@@ -127,3 +131,9 @@ v4l2src device=/dev/video41 ! image/jpeg,width=320,height=240,framerate=30/1 ! j
 gst-launch-1.0 -e \
 filesrc location=input_video.mp4 ! qtdemux name=demux  demux.video_0 ! h264parse ! avdec_h264 ! videoconvert ! x264enc ! mp4mux name=mux  \
 filesrc location=input_audio.wav ! decodebin ! audioconvert ! voaacenc ! queue ! mux. mux. ! filesink location=output.mp4
+
+gst-launch-1.0 -e \
+    v4l2src device=/dev/video31 ! tee name=t \
+        t. ! queue ! video/x-raw,format=NV12,width=800,height=600,framerate=30/1 ! videoconvert ! queue ! videomixer name=mix sink_0::xpos=0 sink_0::ypos=0 sink_1::xpos=800 sink_1::ypos=0 ! x264enc ! mp4mux ! filesink location=/tmp/output.mp4 \
+        t. ! queue ! video/x-raw,format=NV12,width=800,height=600,framerate=30/1 ! videoconvert ! queue ! mix. \
+    v4l2src device=/dev/video32 ! video/x-raw,format=NV12,width=800,height=600,framerate=30/1 ! videoconvert ! queue ! mix.
