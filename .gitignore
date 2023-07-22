@@ -3,6 +3,7 @@ CMakeFiles
 CMakeCache.txt
 *.mp4
 *.jpg
+!/gst_dev/phase1_demo/*.mp4
 
 #
 # cache files
