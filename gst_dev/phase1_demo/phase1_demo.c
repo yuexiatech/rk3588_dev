@@ -228,10 +228,10 @@ void mux_video_audio_stoptrans(GstElement *pipeline){
 //主函数
 int main(int argc, char *argv[]) {
   //variables for mux video and audio and save
-  GstElement *pipeline_save, *filesrc_video_save, *filesrc_audio_save, *qtdemux_save, *h264parse_save, *avdec_h264_save;
+  GstElement *pipeline_save, *filesrc_video_save, *filesrc_audio_save, *qtdemux_save, *h264parse_save, *mppvideodec_save;
   GstElement *videoconvert_save, *x264enc_save, *mp4mux_save, *decodebin_save, *audioconvert_save, *voaacenc_save,  *filesink_save, *queue_save;
   //variables for mux video and audio and play
-  GstElement *pipeline_play, *filesrc_video_play, *filesrc_audio_play, *qtdemux_play, *h264parse_play, *avdec_h264_play;
+  GstElement *pipeline_play, *filesrc_video_play, *filesrc_audio_play, *qtdemux_play, *h264parse_play, *mppvideodec_play;
   GstElement *videoconvert_play, *autovideosink_play, *decodebin_play, *audioconvert_play, *autoaudiosink_play;
   //variables for trans
   GstElement *pipeline_trans, *filesrc_video_trans, *decodebin_trans, *x264enc_trans, *video_queue_trans,*audio_queue_trans, *mp4mux_trans, *filesink_trans;
@@ -250,7 +250,7 @@ int main(int argc, char *argv[]) {
   g_object_set(G_OBJECT(filesrc_audio_save), "location", "input_audio1.wav", NULL);
   qtdemux_save = gst_element_factory_make("qtdemux", "qtdemux_save");
   h264parse_save = gst_element_factory_make("h264parse", "h264parse_save");
-  avdec_h264_save = gst_element_factory_make("avdec_h264", "avdec_h264_save");
+  mppvideodec_save = gst_element_factory_make("mppvideodec", "mppvideodec_save");
   videoconvert_save = gst_element_factory_make("videoconvert", "videoconvert_save");
   x264enc_save = gst_element_factory_make("x264enc", "x264enc_save");
   mp4mux_save = gst_element_factory_make("mp4mux", "mp4mux_save");
@@ -262,7 +262,7 @@ int main(int argc, char *argv[]) {
   queue_save = gst_element_factory_make("queue", "queue_save");
     
     /* 检查所有元素是否创建成功 */
-  if (!pipeline_save || !filesrc_video_save || !filesrc_audio_save || !qtdemux_save || !h264parse_save || !avdec_h264_save
+  if (!pipeline_save || !filesrc_video_save || !filesrc_audio_save || !qtdemux_save || !h264parse_save || !mppvideodec_save
       || !videoconvert_save || !x264enc_save || !mp4mux_save || !decodebin_save || !audioconvert_save || !queue_save
       || !voaacenc_save  || !filesink_save) {
       g_printerr("创建元素失败\n");
@@ -270,7 +270,7 @@ int main(int argc, char *argv[]) {
   }
 
   // 将元素添加到主管道
-  gst_bin_add_many(GST_BIN(pipeline_save), filesrc_video_save, qtdemux_save, h264parse_save, avdec_h264_save,
+  gst_bin_add_many(GST_BIN(pipeline_save), filesrc_video_save, qtdemux_save, h264parse_save, mppvideodec_save,
                    videoconvert_save, x264enc_save, mp4mux_save, filesrc_audio_save, decodebin_save,
                    audioconvert_save, voaacenc_save, queue_save,  filesink_save, NULL);
 
@@ -278,8 +278,8 @@ int main(int argc, char *argv[]) {
   if (
     !gst_element_link_many(filesrc_video_save, qtdemux_save, NULL) ||
     !g_signal_connect (qtdemux_save, "pad-added", G_CALLBACK (qtdemux_pad_added_handler), h264parse_save)||  
-    !gst_element_link(h264parse_save, avdec_h264_save) ||
-    !gst_element_link(avdec_h264_save, videoconvert_save) ||
+    !gst_element_link(h264parse_save, mppvideodec_save) ||
+    !gst_element_link(mppvideodec_save, videoconvert_save) ||
     !gst_element_link(videoconvert_save, x264enc_save) ||
     !gst_element_link(x264enc_save, mp4mux_save) ||
     !gst_element_link(filesrc_audio_save, decodebin_save) ||
@@ -304,7 +304,7 @@ int main(int argc, char *argv[]) {
   g_object_set(G_OBJECT(filesrc_audio_play), "location", "input_audio1.wav", NULL);
   qtdemux_play = gst_element_factory_make("qtdemux", "qtdemux_play");
   h264parse_play = gst_element_factory_make("h264parse", "h264parse_play");
-  avdec_h264_play = gst_element_factory_make("avdec_h264", "avdec_h264_play");
+  mppvideodec_play = gst_element_factory_make("mppvideodec", "mppvideodec_play");
   videoconvert_play = gst_element_factory_make("videoconvert", "videoconvert_play");
   autovideosink_play = gst_element_factory_make("autovideosink", "autovideosink_play");
 
@@ -313,7 +313,7 @@ int main(int argc, char *argv[]) {
   autoaudiosink_play = gst_element_factory_make("autoaudiosink", "autoaudiosink_play");
     
     /* 检查所有元素是否创建成功 */
-  if (!pipeline_play || !filesrc_video_play || !filesrc_audio_play || !qtdemux_play || !h264parse_play || !avdec_h264_play
+  if (!pipeline_play || !filesrc_video_play || !filesrc_audio_play || !qtdemux_play || !h264parse_play || !mppvideodec_play
       || !videoconvert_play || !autovideosink_play || !decodebin_play || !audioconvert_play || !autoaudiosink_play) 
       {
       g_printerr("创建元素失败\n");
@@ -321,7 +321,7 @@ int main(int argc, char *argv[]) {
   }
 
   // 将元素添加到主管道
-  gst_bin_add_many(GST_BIN(pipeline_play), filesrc_video_play, qtdemux_play, h264parse_play, avdec_h264_play,
+  gst_bin_add_many(GST_BIN(pipeline_play), filesrc_video_play, qtdemux_play, h264parse_play, mppvideodec_play,
                    videoconvert_play, autovideosink_play, filesrc_audio_play, decodebin_play,
                    audioconvert_play, autoaudiosink_play, NULL);
 
@@ -329,8 +329,8 @@ int main(int argc, char *argv[]) {
   if (
     !gst_element_link_many(filesrc_video_play, qtdemux_play, NULL) ||
     !g_signal_connect (qtdemux_play, "pad-added", G_CALLBACK (qtdemux_pad_added_handler), h264parse_play)||  
-    !gst_element_link(h264parse_play, avdec_h264_play) ||
-    !gst_element_link(avdec_h264_play, videoconvert_play) ||
+    !gst_element_link(h264parse_play, mppvideodec_play) ||
+    !gst_element_link(mppvideodec_play, videoconvert_play) ||
     !gst_element_link(videoconvert_play, autovideosink_play) ||
     !gst_element_link(filesrc_audio_play, decodebin_play) ||
     !g_signal_connect (decodebin_play, "pad-added", G_CALLBACK (decodebin_pad_added_handler), audioconvert_play)||
